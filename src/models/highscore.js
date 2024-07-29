@@ -8,6 +8,6 @@ const highScoreSchema = new mongoose.Schema({
   score: { type: Number, required: true },
 });
 
-const Highscores = mongoose.model("Highscores", highScoreSchema);
+const Highscore = mongoose.model("Highscores", highScoreSchema);
 
-export default Highscores;
+export default Highscore;

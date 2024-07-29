@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Where's Waldo?</title>
+    <!-- <link rel="icon" type="image/x-icon" href="favicon.ico" /> -->
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: azure;
+      }
+      .collapsible {
+        display: none;
+      }
+
+      .play {
+        background-color: yellow;
+        font-size: 15px;    
+        width: 50px;
+        height: 30px;
+        font-weight: bold;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 3px solid blue;
+        padding: 10px;
+      }
+      .active {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Where's Waldo?</h1>
+    <div class="card" id="beach">
+        <img src="whereswaldo.jpg" width="300" height="300">
+        <h3>On The Beach</h3>
+        <a href="/beach"><button class="play">Play!</button></a>
+    </div>
+    <h2 class="highscores">Show High Scores</h2>
+    <div class="collapsible">
+      <% for (const score in scores) {%>
+        <h2><%= (Number(score) + 1).toString() + ". " + scores[score].user + ": " + (new Date(scores[score].score).toISOString().slice(11, -5)).toString() %></h2>
+      <%}%>
+    </div>
+    <script>
+      let doc = document.querySelector(".highscores");
+      let col = document.querySelector(".collapsible");
+      let beach = document.querySelector("#beach");
+      doc.addEventListener("click", unhide);
+      function unhide() {
+        doc.textContent = "Hide High Scores";
+        doc.removeEventListener("click", unhide);
+        doc.addEventListener("click", hide);
+        col.setAttribute("style", "display: flex;    flex-direction: column");
+      }
+      function hide() {
+        doc.textContent = "Show High Scores";
+        doc.removeEventListener("click", hide);
+        doc.addEventListener("click", unhide);
+        col.setAttribute("style", "display: none");
+      }
+      beach.addEventListener("click", activate);
+      function activate (e) {
+        e.currentTarget.classList.add("active");
+    }
+    </script>
+  </body>
+</html>

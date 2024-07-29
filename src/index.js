@@ -4,7 +4,7 @@ import express from "express";
 import models, { connectDb } from "./models";
 import routes from "./routes";
 
-// const eraseDatabaseOnSync = true;
+const eraseDatabaseOnSync = true;
 
 const app = express();
 
@@ -15,7 +15,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // app.use(async (req, res, next) => {});
 
+app.set("views", __dirname + "/views");
+app.set("view engine", "ejs");
+
 app.use("/", routes.pages);
+app.use(express.static(__dirname + "/assets"));
 
 app.get("*", function (req, res, next) {
   const error = new Error(`${req.ip} tried to access ${req.originalUrl}`);
@@ -25,58 +29,38 @@ app.get("*", function (req, res, next) {
   next(error);
 });
 
-app.use((error, req, res, next) => {
-  if (!error.statusCode) error.statusCode = 500;
+// app.use((error, req, res, next) => {
+//   if (!error.statusCode) error.statusCode = 500;
 
-  if (error.statusCode === 301) {
-    return res.status(301).redirect("/not-found");
-  }
+//   if (error.statusCode === 301) {
+//     return res.status(301).redirect("/not-found");
+//   }
 
-  return res.status(error.statusCode).json({ error: error.toString() });
-});
+//   return res.status(error.statusCode).json({ error: error.toString() });
+// });
 
 connectDb().then(async () => {
-  // if (eraseDatabaseOnSync) {
-  //   await Promise.all([
-  //     models.User.deleteMany({}),
-  //     models.Message.deleteMany({}),
-  //   ]);
-  //   createUsersWithMessages();
-  // }
+  if (eraseDatabaseOnSync) {
+    await Promise.all([models.Highscore.deleteMany({})]);
+    createUsersWithScores();
+  }
 
   app.listen(process.env.PORT, () =>
     console.log(`Example app listening on port ${process.env.PORT}!`),
   );
 });
 
-// const createUsersWithMessages = async () => {
-//   const user1 = new models.User({
-//     username: 'rwieruch',
-//   });
+const createUsersWithScores = async () => {
+  const user1 = new models.Highscore({
+    user: "Wally",
+    score: 100500,
+  });
 
-//   const user2 = new models.User({
-//     username: 'ddavids',
-//   });
+  const user2 = new models.Highscore({
+    user: "fluffycat",
+    score: 24200,
+  });
 
-//   const message1 = new models.Message({
-//     text: 'Published the Road to learn React',
-//     user: user1.id,
-//   });
-
-//   const message2 = new models.Message({
-//     text: 'Happy to release ...',
-//     user: user2.id,
-//   });
-
-//   const message3 = new models.Message({
-//     text: 'Published a complete ...',
-//     user: user2.id,
-//   });
-
-//   await message1.save();
-//   await message2.save();
-//   await message3.save();
-
-//   await user1.save();
-//   await user2.save();
-// };
+  await user1.save();
+  await user2.save();
+};

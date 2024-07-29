@@ -1,17 +1,16 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import Highscores from './highscores';
+import Highscore from "./highscore";
 
 const connectDb = () => {
   return mongoose.connect(process.env.MONGODB_URI);
 };
 
-const models = { Highscores };
+const models = { Highscore };
 
 export { connectDb };
 
 export default models;
-
 
 // let users = {
 //     1: {
@@ -23,7 +22,7 @@ export default models;
 //       username: 'Dave Davids',
 //     },
 //   };
-  
+
 //   let messages = {
 //     1: {
 //       id: '1',
@@ -36,7 +35,7 @@ export default models;
 //       userId: '2',
 //     },
 //   };
-  
+
 //   export default {
 //     users,
 //     messages,
