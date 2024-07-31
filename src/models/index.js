@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
 import Highscore from "./highscore";
+import Temp from "./temporary";
 
 const connectDb = () => {
   return mongoose.connect(process.env.MONGODB_URI);
 };
 
-const models = { Highscore };
+const models = { Highscore, Temp };
 
 export { connectDb };
 

@@ -12,6 +12,12 @@ app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(async (req, res, next) => {
+  req.context = {
+    models,
+  };
+  next();
+});
 
 // app.use(async (req, res, next) => {});
 
@@ -19,6 +25,7 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 
 app.use("/", routes.pages);
+app.use("/api", routes.api);
 app.use(express.static(__dirname + "/assets"));
 
 app.get("*", function (req, res, next) {
@@ -54,11 +61,13 @@ const createUsersWithScores = async () => {
   const user1 = new models.Highscore({
     user: "Wally",
     score: 100500,
+    map: "beach",
   });
 
   const user2 = new models.Highscore({
     user: "fluffycat",
     score: 24200,
+    map: "beach",
   });
 
   await user1.save();

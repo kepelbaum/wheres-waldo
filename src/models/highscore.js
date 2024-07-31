@@ -6,6 +6,10 @@ const highScoreSchema = new mongoose.Schema({
     required: true,
   },
   score: { type: Number, required: true },
+  map: {
+    type: String,
+    required: true,
+  },
 });
 
 const Highscore = mongoose.model("Highscores", highScoreSchema);

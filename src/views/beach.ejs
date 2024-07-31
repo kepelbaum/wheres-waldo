@@ -5,19 +5,260 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Where's Waldo?</title>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
       body {
-        display: flex;
+        /* display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center; */
+      }
+      img {
+        /* object-fit: none; */
+      }
+      .canvas {
+        /* position: absolute; */
+        /* width: 100%;
+        height: 100%; */
+        /* left: 0;
+        top: 0; */
+      }
+      .red {
+        background-color: red;
+      }
+      .green {
+        background-color: green;
+      }
+      .waldo,
+      .whitebeard,
+      .odlaw {
+        width: 100px;
+        height: 50px;
+        border: 1px solid black;
+        display: flex;
+        gap: 10px;
         justify-content: center;
         align-items: center;
       }
-      img {
-        width: 100vw;
-        height: 100vh;
+      .waldo:hover,
+      .whitebeard:hover,
+      .odlaw:hover {
+        background-color: antiquewhite;
+      }
+      .icon {
+        height: 35px;
+        width: 35px;
+      }
+      .header {
+        background-color: antiquewhite;
+        height: 150px;
+        position: sticky;
+        width: 3000px;
+        border-bottom: 2px solid black;
+        top: 0;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        justify-content: space-evenly;
+      }
+      .header img {
+        border: 1px solid black;
       }
     </style>
   </head>
   <body>
-    <img src="whereswaldo.jpg" />
+    <div class="header">
+      <h2>Find these characters!</h2>
+      <div class="group">
+        <img src="waldoface.png" width="100" height="100" />
+        <h3>Waldo</h3>
+      </div>
+      <div class="group">
+        <img src="odlawface.webp" width="100" height="100" />
+        <h3>Odlaw</h3>
+      </div>
+      <div class="group">
+        <img src="whitebeardface.png" width="100" height="100" />
+        <h3>Wizard Whitebeard</h3>
+      </div>
+    </div>
+    <div class="clickable">
+      <img src="whereswaldo.jpg" class="cable" />
+      <div class="canvas"></div>
+    </div>
+    <script>
+      let id;
+      async function startup() {
+        let request = await fetch("http://localhost:3000/api", {
+          mode: "cors",
+          method: "POST",
+          body: JSON.stringify({
+            map: "beach",
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.result) {
+              id = response.result;
+            } else {
+              throw new Error("API fetch error");
+            }
+          })
+          .catch((error) => console.error(error));
+      }
+      async function waldoreq(x, y) {
+        let request = await fetch("http://localhost:3000/api/waldo", {
+          mode: "cors",
+          method: "POST",
+          body: JSON.stringify({
+            id: id,
+            x: x,
+            y: y,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.result) {
+              if (response.result === "Right!") {
+                lastGuess = "y";
+                return "y";
+              } else {
+                lastGuess = "n";
+                return "n";
+              }
+            } else {
+              throw new Error("API fetch error");
+            }
+          })
+          .catch((error) => console.error(error));
+      }
+      startup();
+      let totalLeft = 3;
+      let waldoFound = false;
+      let odlawFound = false;
+      let wizardFound = false;
+      let lastGuess = "";
+      const cdiv = document.querySelector(".canvas");
+      const cable = document.querySelector(".clickable");
+      let body = document.querySelector("body");
+      cable.addEventListener("click", circle);
+      async function circle(e) {
+        let canvas = document.createElement("canvas");
+        var rect = e.currentTarget.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top + 150;
+        console.log("Left : " + x + " ; Top : " + y + ".");
+        function drawCircle(ele, color) {
+          const context = ele.getContext("2d");
+          const centerX = ele.width / 2;
+          const centerY = ele.height / 2;
+          const radius = 50;
+          context.beginPath();
+          context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+          context.lineWidth = 5;
+          if (color) {
+            context.strokeStyle = color;
+          }
+          context.stroke();
+          ele.setAttribute(
+            "style",
+            "position: absolute; left: " +
+              (x - centerX) +
+              "px; top: " +
+              (y - centerY) +
+              "px;",
+          );
+        }
+        const context = canvas.getContext("2d");
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 50;
+        context.beginPath();
+        context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+        context.lineWidth = 5;
+        // context.strokeStyle = "red";
+        context.stroke();
+        canvas.setAttribute(
+          "style",
+          "position: absolute; left: " +
+            (x - centerX) +
+            "px; top: " +
+            (y - centerY) +
+            "px;",
+        );
+        cdiv.appendChild(canvas);
+        const div = document.createElement("div");
+        div.setAttribute("id", "#onclick");
+        const waldo = document.createElement("div");
+        const odlaw = document.createElement("div");
+        const whitebeard = document.createElement("div");
+        const waldopic = document.createElement("img");
+        waldopic.setAttribute("src", "waldoface.png");
+        waldopic.classList.add("icon");
+        const odlawpic = document.createElement("img");
+        odlawpic.setAttribute("src", "odlawface.webp");
+        odlawpic.classList.add("icon");
+        const whitebeardpic = document.createElement("img");
+        whitebeardpic.setAttribute("src", "whitebeardface.png");
+        whitebeardpic.classList.add("icon");
+        waldo.classList.add("waldo");
+        odlaw.classList.add("odlaw");
+        whitebeard.classList.add("whitebeard");
+        const waldotext = document.createElement("div");
+        const odlawtext = document.createElement("div");
+        const whitebeardtext = document.createElement("div");
+        waldotext.textContent = "Waldo";
+        odlawtext.textContent = "Odlaw";
+        whitebeardtext.textContent = "Wizard";
+        div.setAttribute(
+          "style",
+          "width: 100px; height: 150px; background-color: white; position: absolute; left: " +
+            (x + 60) +
+            "px; top: " +
+            (y - centerY) +
+            "px; display: flex; flex-direction: column;",
+        );
+        waldo.appendChild(waldopic);
+        waldo.appendChild(waldotext);
+        odlaw.appendChild(odlawpic);
+        odlaw.appendChild(odlawtext);
+        whitebeard.appendChild(whitebeardpic);
+        whitebeard.appendChild(whitebeardtext);
+        waldo.addEventListener("click", async () => {
+          let getResponse = await waldoreq(x, y);
+          let newCanvas = document.createElement("canvas");
+          if (lastGuess === "y") {
+            drawCircle(newCanvas, "green");
+            waldoFound = true;
+          } else if (lastGuess === "n") {
+            drawCircle(newCanvas, "red");
+            waldoFound = true;
+          }
+          cdiv.appendChild(newCanvas);
+        });
+        div.appendChild(waldo);
+        div.appendChild(odlaw);
+        div.appendChild(whitebeard);
+        cdiv.appendChild(div);
+        cable.removeEventListener("click", circle);
+        // div.addEventListener("click", () => console.log("Hello World!"));
+        cable.addEventListener("click", uncircle);
+        function uncircle() {
+          cable.removeEventListener("click", uncircle);
+          cdiv.removeChild(div);
+          cdiv.removeChild(canvas);
+          cable.addEventListener("click", circle);
+        }
+      }
+    </script>
   </body>
 </html>
