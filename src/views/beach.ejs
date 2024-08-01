@@ -141,8 +141,66 @@
           })
           .catch((error) => console.error(error));
       }
+      async function odlawreq(x, y) {
+        let request = await fetch("http://localhost:3000/api/odlaw", {
+          mode: "cors",
+          method: "POST",
+          body: JSON.stringify({
+            id: id,
+            x: x,
+            y: y,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.result) {
+              if (response.result === "Right!") {
+                lastGuess = "y";
+                return "y";
+              } else {
+                lastGuess = "n";
+                return "n";
+              }
+            } else {
+              throw new Error("API fetch error");
+            }
+          })
+          .catch((error) => console.error(error));
+      }
+      async function wizardreq(x, y) {
+        let request = await fetch("http://localhost:3000/api/wizard", {
+          mode: "cors",
+          method: "POST",
+          body: JSON.stringify({
+            id: id,
+            x: x,
+            y: y,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.result) {
+              console.log(response);
+              if (response.result === "Right!") {
+                lastGuess = "y";
+                return "y";
+              } else {
+                lastGuess = "n";
+                return "n";
+              }
+            } else {
+              throw new Error("API fetch error");
+            }
+          })
+          .catch((error) => console.error(error));
+      }
       startup();
-      let totalLeft = 3;
       let waldoFound = false;
       let odlawFound = false;
       let wizardFound = false;
@@ -219,12 +277,23 @@
         waldotext.textContent = "Waldo";
         odlawtext.textContent = "Odlaw";
         whitebeardtext.textContent = "Wizard";
+        let divx =
+          y > 1980 && x > 2835
+            ? x - 100
+            : y > 1980 && x < 55
+              ? x + 60
+              : y > 1980
+                ? x - 40
+                : x > 2835
+                  ? x - 160
+                  : x + 60;
+        let divy = y > 1980 ? y - centerY - 150 : y - centerY;
         div.setAttribute(
           "style",
           "width: 100px; height: 150px; background-color: white; position: absolute; left: " +
-            (x + 60) +
+            divx +
             "px; top: " +
-            (y - centerY) +
+            divy +
             "px; display: flex; flex-direction: column;",
         );
         waldo.appendChild(waldopic);
@@ -245,12 +314,33 @@
           }
           cdiv.appendChild(newCanvas);
         });
+        odlaw.addEventListener("click", async () => {
+          let getResponse = await odlawreq(x, y);
+          let newCanvas = document.createElement("canvas");
+          if (lastGuess === "y") {
+            drawCircle(newCanvas, "green");
+            odlawFound = true;
+          } else if (lastGuess === "n") {
+            drawCircle(newCanvas, "red");
+          }
+          cdiv.appendChild(newCanvas);
+        });
+        whitebeard.addEventListener("click", async () => {
+          let getResponse = await wizardreq(x, y);
+          let newCanvas = document.createElement("canvas");
+          if (lastGuess === "y") {
+            drawCircle(newCanvas, "green");
+            wizardFound = true;
+          } else if (lastGuess === "n") {
+            drawCircle(newCanvas, "red");
+          }
+          cdiv.appendChild(newCanvas);
+        });
         div.appendChild(waldo);
         div.appendChild(odlaw);
         div.appendChild(whitebeard);
         cdiv.appendChild(div);
         cable.removeEventListener("click", circle);
-        // div.addEventListener("click", () => console.log("Hello World!"));
         cable.addEventListener("click", uncircle);
         function uncircle() {
           cable.removeEventListener("click", uncircle);
