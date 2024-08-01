@@ -162,7 +162,7 @@
       let interval;
       let timer = document.querySelector(".timer");
       async function startup() {
-        let request = await fetch("http://localhost:3000/api", {
+        let request = await fetch("https://wheres-waldo-production.up.railway.app/api", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
@@ -195,7 +195,7 @@
         interval = setInterval(updateTime, 10);
       }
       async function waldoreq(x, y) {
-        let request = await fetch("http://localhost:3000/api/waldo", {
+        let request = await fetch("https://wheres-waldo-production.up.railway.app/api/waldo", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
@@ -224,7 +224,7 @@
           .catch((error) => console.error(error));
       }
       async function odlawreq(x, y) {
-        let request = await fetch("http://localhost:3000/api/odlaw", {
+        let request = await fetch("https://wheres-waldo-production.up.railway.app/api/odlaw", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
@@ -253,7 +253,7 @@
           .catch((error) => console.error(error));
       }
       async function wizardreq(x, y) {
-        let request = await fetch("http://localhost:3000/api/wizard", {
+        let request = await fetch("https://wheres-waldo-production.up.railway.app/api/wizard", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
@@ -292,7 +292,7 @@
           let time;
           cable.removeEventListener("click", circle);
           let div = document.createElement("div");
-          let request = await fetch("http://localhost:3000/api/time", {
+          let request = await fetch("https://wheres-waldo-production.up.railway.app/api/time", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
@@ -324,7 +324,7 @@
           button.textContent = "Submit";
           button.addEventListener("click", () => {submit(namestr)});
           async function submit (user) {
-            let request = await fetch("http://localhost:3000/api/score", {
+            let request = await fetch("https://wheres-waldo-production.up.railway.app/api/score", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
@@ -339,7 +339,7 @@
           .then((response) => {
             if (response.result) {
               if (response.result === "Score submitted") {
-                window.location.replace("http://localhost:3000");
+                window.location.replace("https://wheres-waldo-production.up.railway.app/");
               }
               else {
                 console.log("Score submission error");
