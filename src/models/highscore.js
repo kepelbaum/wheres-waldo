@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const highScoreSchema = new mongoose.Schema({
   user: {
     type: String,
-    required: true,
+    default: "Anonymous",
   },
   score: { type: Date, required: true },
   map: {

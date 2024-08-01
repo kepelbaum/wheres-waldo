@@ -4,7 +4,7 @@ import express from "express";
 import models, { connectDb } from "./models";
 import routes from "./routes";
 
-const eraseDatabaseOnSync = true;
+const eraseDatabaseOnSync = false;
 
 const app = express();
 

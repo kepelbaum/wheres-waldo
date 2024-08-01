@@ -32,6 +32,10 @@
       .green {
         background-color: green;
       }
+      .timer {
+        font-size: 30px;
+        font-weight: bold;
+      }
       .waldo,
       .whitebeard,
       .odlaw {
@@ -121,6 +125,7 @@
   </head>
   <body>
     <div class="header">
+      <div class="timer"></div>
       <h2>Find these characters!</h2>
       <div class="group">
         <img src="waldoface.png" width="100" height="100" />
@@ -153,6 +158,9 @@
     </div>
     <script>
       let id;
+      let date;
+      let interval;
+      let timer = document.querySelector(".timer");
       async function startup() {
         let request = await fetch("http://localhost:3000/api", {
           mode: "cors",
@@ -168,11 +176,23 @@
           .then((response) => {
             if (response.result) {
               id = response.result;
+              date = response.date;
+              setTimer(date);
             } else {
               throw new Error("API fetch error");
             }
           })
           .catch((error) => console.error(error));
+      }
+      function setTimer (date) {
+        const start = new Date(date);
+        function updateTime () {
+          let end = Date.now();
+          let di = new Date(end - start);
+          let diff = new Date(end - start).toISOString().slice(14, -1).toString();
+          timer.textContent = diff;
+        }
+        interval = setInterval(updateTime, 10);
       }
       async function waldoreq(x, y) {
         let request = await fetch("http://localhost:3000/api/waldo", {
@@ -291,6 +311,8 @@
             }
           })
           .catch((error) => console.error(error));
+          clearInterval(interval);
+          timer.textContent = time;
           div.textContent = "Congratulations, you found all the characters!\nYour time was: " + time + "!"
           div.classList.add("finaldiv");
           let namestr = "";
@@ -302,13 +324,12 @@
           button.textContent = "Submit";
           button.addEventListener("click", () => {submit(namestr)});
           async function submit (user) {
-            console.log(namestr);
             let request = await fetch("http://localhost:3000/api/score", {
           mode: "cors",
           method: "POST",
           body: JSON.stringify({
             id: id,
-            name: user,
+            user: user,
           }),
           headers: {
             "Content-type": "application/json; charset=UTF-8",
@@ -318,7 +339,7 @@
           .then((response) => {
             if (response.result) {
               if (response.result === "Score submitted") {
-                div.textContent = "Placeholder!"
+                window.location.replace("http://localhost:3000");
               }
               else {
                 console.log("Score submission error");
