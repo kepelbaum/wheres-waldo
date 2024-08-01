@@ -92,7 +92,7 @@ router.post("/score", async (req, res, next) => {
   let record = await req.context.models.Temp.findById(req.body.id);
   if (record.score) {
     let newScore = await req.context.models.Highscore.create({
-      user: req.body.user !== null ? req.body.user : "Anonymous",
+      user: req.body.user,
       score: record.score,
       map: record.map,
     }).catch((error) => {
