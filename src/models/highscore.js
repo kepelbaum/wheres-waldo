@@ -5,7 +5,7 @@ const highScoreSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  score: { type: Number, required: true },
+  score: { type: Date, required: true },
   map: {
     type: String,
     required: true,

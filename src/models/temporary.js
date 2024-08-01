@@ -6,6 +6,7 @@ const tempSchema = new mongoose.Schema({
   whitebeard: { type: Boolean, required: true },
   map: { type: String, required: true },
   date: { type: Date, default: Date.now() },
+  score: { type: Date },
 });
 
 const Temp = mongoose.model("Temp", tempSchema);

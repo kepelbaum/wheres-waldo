@@ -55,6 +55,8 @@
       .header {
         background-color: antiquewhite;
         height: 150px;
+        /* position: fixed;
+        width: 100vw; */
         position: sticky;
         width: 3000px;
         border-bottom: 2px solid black;
@@ -67,6 +69,54 @@
       .header img {
         border: 1px solid black;
       }
+      .group {
+        display: flex;
+        gap: 20px;
+      }
+      .col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      .colored {
+        color: red;
+      }
+      .circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+      .colorgr {
+        color: green;
+      }
+      .finaldiv {
+        background-color: antiquewhite;
+        width: 500px;
+        height: 300px;
+        position: fixed;
+        left: 45%;
+        top: 45%;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        /* gap: 10px; */
+        padding: 10px;
+        border: 3px solid black;
+      }
+      .finalbutton {
+        width: 50px;
+        height: 30px;
+      }
+      /* @media (max-width: 2000px) { 
+        .header {
+          position: sticky;
+          width: 3000px;
+        }
+       } */
     </style>
   </head>
   <body>
@@ -74,15 +124,27 @@
       <h2>Find these characters!</h2>
       <div class="group">
         <img src="waldoface.png" width="100" height="100" />
-        <h3>Waldo</h3>
+        <div class="col">
+          <div class="circle red" id="walc"></div>
+          <h2>Waldo</h3>
+          <h3 class="colored" id="walt">Not Found</h2>
+        </div>
       </div>
       <div class="group">
         <img src="odlawface.webp" width="100" height="100" />
-        <h3>Odlaw</h3>
+        <div class="col">
+          <div class="circle red" id="odlc"></div>
+          <h3>Odlaw</h3>
+          <h3 class="colored" id="odlt">Not Found</h2>
+        </div>
       </div>
       <div class="group">
         <img src="whitebeardface.png" width="100" height="100" />
-        <h3>Wizard Whitebeard</h3>
+        <div class="col">
+          <div class="circle red" id="wizc"></div>
+          <h3>Wizard Whitebeard</h3>
+          <h3 class="colored" id="wizt">Not Found</h2>
+        </div>
       </div>
     </div>
     <div class="clickable">
@@ -186,7 +248,6 @@
           .then((response) => response.json())
           .then((response) => {
             if (response.result) {
-              console.log(response);
               if (response.result === "Right!") {
                 lastGuess = "y";
                 return "y";
@@ -204,7 +265,90 @@
       let waldoFound = false;
       let odlawFound = false;
       let wizardFound = false;
+      let waldosLeft = 3;
       let lastGuess = "";
+      async function checkWin () {
+        if (waldosLeft === 0) {
+          let time;
+          cable.removeEventListener("click", circle);
+          let div = document.createElement("div");
+          let request = await fetch("http://localhost:3000/api/time", {
+          mode: "cors",
+          method: "POST",
+          body: JSON.stringify({
+            id: id,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.result) {
+              time = new Date(response.result).toISOString().slice(14, -1);
+            } else {
+              throw new Error("API fetch error");
+            }
+          })
+          .catch((error) => console.error(error));
+          div.textContent = "Congratulations, you found all the characters!\nYour time was: " + time + "!"
+          div.classList.add("finaldiv");
+          let namestr = "";
+          let name = document.createElement("input");
+          name.setAttribute("type", "text");
+          name.addEventListener("change", (e) => {namestr = e.currentTarget.value});
+          let button = document.createElement("button");
+          button.classList.add("finalbutton");
+          button.textContent = "Submit";
+          button.addEventListener("click", () => {submit(namestr)});
+          async function submit (user) {
+            console.log(namestr);
+            let request = await fetch("http://localhost:3000/api/score", {
+          mode: "cors",
+          method: "POST",
+          body: JSON.stringify({
+            id: id,
+            name: user,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.result) {
+              if (response.result === "Score submitted") {
+                div.textContent = "Placeholder!"
+              }
+              else {
+                console.log("Score submission error");
+              }
+            } else {
+              throw new Error("API fetch error");
+            }
+          })
+          .catch((error) => console.error(error));
+          }
+          div.appendChild(name);
+          div.appendChild(button);
+          body.appendChild(div);
+        }
+      }
+      const walc = document.querySelector("#walc");
+      const walt = document.querySelector("#walt");
+      const odlc = document.querySelector("#odlc");
+      const odlt = document.querySelector("#odlt");
+      const wizc = document.querySelector("#wizc");
+      const wizt = document.querySelector("#wizt");
+      function turnCircleGreen (ele) {
+        ele.classList.remove("red");
+        ele.classList.add("green");
+      }
+      function turnTextGreen (ele) {
+        ele.classList.remove("colored");
+        ele.classList.add("colorgr");
+        ele.textContent = "Found";
+      }
       const cdiv = document.querySelector(".canvas");
       const cable = document.querySelector(".clickable");
       let body = document.querySelector("body");
@@ -214,7 +358,7 @@
         var rect = e.currentTarget.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top + 150;
-        console.log("Left : " + x + " ; Top : " + y + ".");
+        // console.log("Left : " + x + " ; Top : " + y + ".");
         function drawCircle(ele, color) {
           const context = ele.getContext("2d");
           const centerX = ele.width / 2;
@@ -256,27 +400,91 @@
         cdiv.appendChild(canvas);
         const div = document.createElement("div");
         div.setAttribute("id", "#onclick");
-        const waldo = document.createElement("div");
-        const odlaw = document.createElement("div");
-        const whitebeard = document.createElement("div");
-        const waldopic = document.createElement("img");
-        waldopic.setAttribute("src", "waldoface.png");
-        waldopic.classList.add("icon");
-        const odlawpic = document.createElement("img");
-        odlawpic.setAttribute("src", "odlawface.webp");
-        odlawpic.classList.add("icon");
-        const whitebeardpic = document.createElement("img");
-        whitebeardpic.setAttribute("src", "whitebeardface.png");
-        whitebeardpic.classList.add("icon");
-        waldo.classList.add("waldo");
-        odlaw.classList.add("odlaw");
-        whitebeard.classList.add("whitebeard");
-        const waldotext = document.createElement("div");
-        const odlawtext = document.createElement("div");
-        const whitebeardtext = document.createElement("div");
-        waldotext.textContent = "Waldo";
-        odlawtext.textContent = "Odlaw";
-        whitebeardtext.textContent = "Wizard";
+
+        if (!waldoFound) {
+          const waldo = document.createElement("div");
+          const waldopic = document.createElement("img");
+          waldopic.setAttribute("src", "waldoface.png");
+          waldopic.classList.add("icon");
+          waldo.classList.add("waldo");
+          const waldotext = document.createElement("div");
+          waldotext.textContent = "Waldo";
+          waldo.appendChild(waldopic);
+          waldo.appendChild(waldotext);
+          waldo.addEventListener("click", async () => {
+            let getResponse = await waldoreq(x, y);
+            let newCanvas = document.createElement("canvas");
+            if (lastGuess === "y") {
+              drawCircle(newCanvas, "green");
+              waldoFound = true;
+              waldosLeft--;
+              turnCircleGreen(walc);
+              turnTextGreen(walt);
+              checkWin();
+            } else if (lastGuess === "n") {
+              drawCircle(newCanvas, "red");
+            }
+            cdiv.appendChild(newCanvas);
+          });
+          div.appendChild(waldo);
+        }
+
+        if (!odlawFound) {
+          const odlaw = document.createElement("div");
+          const odlawpic = document.createElement("img");
+          odlawpic.setAttribute("src", "odlawface.webp");
+          odlawpic.classList.add("icon");
+          odlaw.classList.add("odlaw");
+          const odlawtext = document.createElement("div");
+          odlawtext.textContent = "Odlaw";
+          odlaw.appendChild(odlawpic);
+          odlaw.appendChild(odlawtext);
+          odlaw.addEventListener("click", async () => {
+            let getResponse = await odlawreq(x, y);
+            let newCanvas = document.createElement("canvas");
+            if (lastGuess === "y") {
+              drawCircle(newCanvas, "green");
+              odlawFound = true;
+              waldosLeft--;
+              turnCircleGreen(odlc);
+              turnTextGreen(odlt);
+              checkWin();
+            } else if (lastGuess === "n") {
+              drawCircle(newCanvas, "red");
+            }
+            cdiv.appendChild(newCanvas);
+          });
+          div.appendChild(odlaw);
+        }
+
+        if (!wizardFound) {
+          const whitebeard = document.createElement("div");
+          const whitebeardpic = document.createElement("img");
+          whitebeardpic.setAttribute("src", "whitebeardface.png");
+          whitebeardpic.classList.add("icon");
+          whitebeard.classList.add("whitebeard");
+          const whitebeardtext = document.createElement("div");
+          whitebeardtext.textContent = "Wizard";
+          whitebeard.appendChild(whitebeardpic);
+          whitebeard.appendChild(whitebeardtext);
+          whitebeard.addEventListener("click", async () => {
+            let getResponse = await wizardreq(x, y);
+            let newCanvas = document.createElement("canvas");
+            if (lastGuess === "y") {
+              drawCircle(newCanvas, "green");
+              wizardFound = true;
+              waldosLeft--;
+              turnCircleGreen(wizc);
+              turnTextGreen(wizt);
+              checkWin();
+            } else if (lastGuess === "n") {
+              drawCircle(newCanvas, "red");
+            }
+            cdiv.appendChild(newCanvas);
+          });
+          div.appendChild(whitebeard);
+        }
+
         let divx =
           y > 1980 && x > 2835
             ? x - 100
@@ -290,55 +498,15 @@
         let divy = y > 1980 ? y - centerY - 150 : y - centerY;
         div.setAttribute(
           "style",
-          "width: 100px; height: 150px; background-color: white; position: absolute; left: " +
+          "width: 100px; height: " +
+            waldosLeft * 50 +
+            "px; background-color: white; position: absolute; left: " +
             divx +
             "px; top: " +
             divy +
             "px; display: flex; flex-direction: column;",
         );
-        waldo.appendChild(waldopic);
-        waldo.appendChild(waldotext);
-        odlaw.appendChild(odlawpic);
-        odlaw.appendChild(odlawtext);
-        whitebeard.appendChild(whitebeardpic);
-        whitebeard.appendChild(whitebeardtext);
-        waldo.addEventListener("click", async () => {
-          let getResponse = await waldoreq(x, y);
-          let newCanvas = document.createElement("canvas");
-          if (lastGuess === "y") {
-            drawCircle(newCanvas, "green");
-            waldoFound = true;
-          } else if (lastGuess === "n") {
-            drawCircle(newCanvas, "red");
-            waldoFound = true;
-          }
-          cdiv.appendChild(newCanvas);
-        });
-        odlaw.addEventListener("click", async () => {
-          let getResponse = await odlawreq(x, y);
-          let newCanvas = document.createElement("canvas");
-          if (lastGuess === "y") {
-            drawCircle(newCanvas, "green");
-            odlawFound = true;
-          } else if (lastGuess === "n") {
-            drawCircle(newCanvas, "red");
-          }
-          cdiv.appendChild(newCanvas);
-        });
-        whitebeard.addEventListener("click", async () => {
-          let getResponse = await wizardreq(x, y);
-          let newCanvas = document.createElement("canvas");
-          if (lastGuess === "y") {
-            drawCircle(newCanvas, "green");
-            wizardFound = true;
-          } else if (lastGuess === "n") {
-            drawCircle(newCanvas, "red");
-          }
-          cdiv.appendChild(newCanvas);
-        });
-        div.appendChild(waldo);
-        div.appendChild(odlaw);
-        div.appendChild(whitebeard);
+
         cdiv.appendChild(div);
         cable.removeEventListener("click", circle);
         cable.addEventListener("click", uncircle);

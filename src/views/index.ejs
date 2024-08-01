@@ -47,7 +47,7 @@
     <h2 class="highscores">Show High Scores</h2>
     <div class="collapsible">
       <% for (const score in scores) {%>
-        <h2><%= (Number(score) + 1).toString() + ". " + scores[score].user + ": " + (new Date(scores[score].score).toISOString().slice(11, -5)).toString() %></h2>
+        <h2><%= (Number(score) + 1).toString() + ". " + scores[score].user + ": " + (new Date(scores[score].score).toISOString().slice(14, -1)).toString() %></h2>
       <%}%>
     </div>
     <script>
