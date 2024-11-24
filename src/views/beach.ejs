@@ -10,32 +10,34 @@
         padding: 0;
         box-sizing: border-box;
       }
+
       body {
-        /* display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center; */
+        margin: 0;
+        width: 100%;
+        overflow-x: auto;
       }
-      img {
-        /* object-fit: none; */
-      }
+
       .canvas {
-        /* position: absolute; */
-        /* width: 100%;
-        height: 100%; */
-        /* left: 0;
-        top: 0; */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
       }
+
       .red {
         background-color: red;
       }
+
       .green {
         background-color: green;
       }
+
       .timer {
         font-size: 30px;
         font-weight: bold;
       }
+
       .waldo,
       .whitebeard,
       .odlaw {
@@ -47,54 +49,73 @@
         justify-content: center;
         align-items: center;
       }
+
       .waldo:hover,
       .whitebeard:hover,
       .odlaw:hover {
         background-color: antiquewhite;
       }
+
       .icon {
         height: 35px;
         width: 35px;
       }
+
       .header {
         background-color: antiquewhite;
         height: 150px;
-        /* position: fixed;
-        width: 100vw; */
-        position: sticky;
-        width: 3000px;
+        position: fixed;
+        width: 100%;
         border-bottom: 2px solid black;
         top: 0;
+        left: 0;
         display: flex;
         align-items: center;
-        padding: 20px;
+        padding: 10px;
         justify-content: space-evenly;
+        z-index: 1000;
+        position: sticky;
+        min-width: 100vw;
       }
+
+      .game-wrapper {
+        position: relative;
+        overflow-x: auto;
+        width: 100%;
+      }
+
       .header img {
         border: 1px solid black;
       }
+
       .group {
         display: flex;
-        gap: 20px;
+        gap: 10px;
+        align-items: center;
       }
+
       .col {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
       }
+
       .colored {
         color: red;
       }
+
       .circle {
         width: 30px;
         height: 30px;
         border-radius: 50%;
       }
+
       .colorgr {
         color: green;
       }
+
       .finaldiv {
         background-color: antiquewhite;
         width: 500px;
@@ -107,20 +128,77 @@
         flex-direction: column;
         justify-content: space-evenly;
         align-items: center;
-        /* gap: 10px; */
         padding: 10px;
         border: 3px solid black;
       }
+
       .finalbutton {
         width: 50px;
         height: 30px;
       }
-      /* @media (max-width: 2000px) { 
+
+      .clickable {
+        position: relative;
+        width: fit-content;
+      }
+
+      @media (max-width: 768px) {
         .header {
-          position: sticky;
-          width: 3000px;
+          height: 80px;
+          padding: 5px;
         }
-       } */
+
+        .group img {
+          width: 50px;
+          height: 50px;
+        }
+
+        .col h3,
+        .col h2 {
+          display: none;
+        }
+
+        .circle {
+          width: 20px;
+          height: 20px;
+        }
+
+        .timer {
+          font-size: 20px;
+        }
+
+        h2 {
+          font-size: 16px;
+        }
+
+        .header h2 {
+          display: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header {
+          height: 60px;
+        }
+
+        .group img {
+          width: 40px;
+          height: 40px;
+        }
+
+        .circle {
+          width: 15px;
+          height: 15px;
+        }
+
+        .timer {
+          font-size: 16px;
+        }
+
+        h2 {
+          font-size: 14px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -131,8 +209,8 @@
         <img src="waldoface.png" width="100" height="100" />
         <div class="col">
           <div class="circle red" id="walc"></div>
-          <h2>Waldo</h3>
-          <h3 class="colored" id="walt">Not Found</h2>
+          <h3>Waldo</h3>
+          <h3 class="colored" id="walt">Not Found</h3>
         </div>
       </div>
       <div class="group">
@@ -140,7 +218,7 @@
         <div class="col">
           <div class="circle red" id="odlc"></div>
           <h3>Odlaw</h3>
-          <h3 class="colored" id="odlt">Not Found</h2>
+          <h3 class="colored" id="odlt">Not Found</h3>
         </div>
       </div>
       <div class="group">
@@ -148,13 +226,15 @@
         <div class="col">
           <div class="circle red" id="wizc"></div>
           <h3>Wizard Whitebeard</h3>
-          <h3 class="colored" id="wizt">Not Found</h2>
+          <h3 class="colored" id="wizt">Not Found</h3>
         </div>
       </div>
     </div>
-    <div class="clickable">
-      <img src="whereswaldo.jpg" class="cable" />
-      <div class="canvas"></div>
+    <div class="game-wrapper">
+      <div class="clickable">
+        <img src="whereswaldo.jpg" class="cable" />
+        <div class="canvas"></div>
+      </div>
     </div>
     <script>
       let id;
@@ -162,16 +242,19 @@
       let interval;
       let timer = document.querySelector(".timer");
       async function startup() {
-        let request = await fetch("https://wheres-waldo-production.up.railway.app/api", {
-          mode: "cors",
-          method: "POST",
-          body: JSON.stringify({
-            map: "beach",
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
+        let request = await fetch(
+          "https://wheres-waldo-production.up.railway.app/api/beach",
+          {
+            mode: "cors",
+            method: "POST",
+            body: JSON.stringify({
+              map: "beach",
+            }),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
           },
-        })
+        )
           .then((response) => response.json())
           .then((response) => {
             if (response.result) {
@@ -184,29 +267,35 @@
           })
           .catch((error) => console.error(error));
       }
-      function setTimer (date) {
+      function setTimer(date) {
         const start = new Date(date);
-        function updateTime () {
+        function updateTime() {
           let end = Date.now();
           let di = new Date(end - start);
-          let diff = new Date(end - start).toISOString().slice(14, -1).toString();
+          let diff = new Date(end - start)
+            .toISOString()
+            .slice(14, -1)
+            .toString();
           timer.textContent = diff;
         }
         interval = setInterval(updateTime, 10);
       }
       async function waldoreq(x, y) {
-        let request = await fetch("https://wheres-waldo-production.up.railway.app/api/waldo", {
-          mode: "cors",
-          method: "POST",
-          body: JSON.stringify({
-            id: id,
-            x: x,
-            y: y,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
+        let request = await fetch(
+          "https://wheres-waldo-production.up.railway.app/api/beach/waldo",
+          {
+            mode: "cors",
+            method: "POST",
+            body: JSON.stringify({
+              id: id,
+              x: x,
+              y: y,
+            }),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
           },
-        })
+        )
           .then((response) => response.json())
           .then((response) => {
             if (response.result) {
@@ -224,18 +313,21 @@
           .catch((error) => console.error(error));
       }
       async function odlawreq(x, y) {
-        let request = await fetch("https://wheres-waldo-production.up.railway.app/api/odlaw", {
-          mode: "cors",
-          method: "POST",
-          body: JSON.stringify({
-            id: id,
-            x: x,
-            y: y,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
+        let request = await fetch(
+          "https://wheres-waldo-production.up.railway.app/api/beach/odlaw",
+          {
+            mode: "cors",
+            method: "POST",
+            body: JSON.stringify({
+              id: id,
+              x: x,
+              y: y,
+            }),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
           },
-        })
+        )
           .then((response) => response.json())
           .then((response) => {
             if (response.result) {
@@ -253,18 +345,21 @@
           .catch((error) => console.error(error));
       }
       async function wizardreq(x, y) {
-        let request = await fetch("https://wheres-waldo-production.up.railway.app/api/wizard", {
-          mode: "cors",
-          method: "POST",
-          body: JSON.stringify({
-            id: id,
-            x: x,
-            y: y,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
+        let request = await fetch(
+          "https://wheres-waldo-production.up.railway.app/api/beach/wizard",
+          {
+            mode: "cors",
+            method: "POST",
+            body: JSON.stringify({
+              id: id,
+              x: x,
+              y: y,
+            }),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
           },
-        })
+        )
           .then((response) => response.json())
           .then((response) => {
             if (response.result) {
@@ -287,68 +382,82 @@
       let wizardFound = false;
       let waldosLeft = 3;
       let lastGuess = "";
-      async function checkWin () {
+      async function checkWin() {
         if (waldosLeft === 0) {
           let time;
           cable.removeEventListener("click", circle);
           let div = document.createElement("div");
-          let request = await fetch("https://wheres-waldo-production.up.railway.app/api/time", {
-          mode: "cors",
-          method: "POST",
-          body: JSON.stringify({
-            id: id,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        })
-          .then((response) => response.json())
-          .then((response) => {
-            if (response.result) {
-              time = new Date(response.result).toISOString().slice(14, -1);
-            } else {
-              throw new Error("API fetch error");
-            }
-          })
-          .catch((error) => console.error(error));
+          let request = await fetch(
+            "https://wheres-waldo-production.up.railway.app/api/beach/time",
+            {
+              mode: "cors",
+              method: "POST",
+              body: JSON.stringify({
+                id: id,
+              }),
+              headers: {
+                "Content-type": "application/json; charset=UTF-8",
+              },
+            },
+          )
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.result) {
+                time = new Date(response.result).toISOString().slice(14, -1);
+              } else {
+                throw new Error("API fetch error");
+              }
+            })
+            .catch((error) => console.error(error));
           clearInterval(interval);
           timer.textContent = time;
-          div.textContent = "Congratulations, you found all the characters!\nYour time was: " + time + "!"
+          div.textContent =
+            "Congratulations, you found all the characters!\nYour time was: " +
+            time +
+            "!";
           div.classList.add("finaldiv");
           let namestr = "";
           let name = document.createElement("input");
           name.setAttribute("type", "text");
-          name.addEventListener("change", (e) => {namestr = e.currentTarget.value});
+          name.addEventListener("change", (e) => {
+            namestr = e.currentTarget.value;
+          });
           let button = document.createElement("button");
           button.classList.add("finalbutton");
           button.textContent = "Submit";
-          button.addEventListener("click", () => {submit(namestr)});
-          async function submit (user) {
-            let request = await fetch("https://wheres-waldo-production.up.railway.app/api/score", {
-          mode: "cors",
-          method: "POST",
-          body: JSON.stringify({
-            id: id,
-            user: user,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        })
-          .then((response) => response.json())
-          .then((response) => {
-            if (response.result) {
-              if (response.result === "Score submitted") {
-                window.location.replace("https://wheres-waldo-production.up.railway.app/");
-              }
-              else {
-                console.log("Score submission error");
-              }
-            } else {
-              throw new Error("API fetch error");
-            }
-          })
-          .catch((error) => console.error(error));
+          button.addEventListener("click", () => {
+            submit(namestr);
+          });
+          async function submit(user) {
+            let request = await fetch(
+              "https://wheres-waldo-production.up.railway.app/api/beach/score",
+              {
+                mode: "cors",
+                method: "POST",
+                body: JSON.stringify({
+                  id: id,
+                  user: user,
+                }),
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                },
+              },
+            )
+              .then((response) => response.json())
+              .then((response) => {
+                if (response.result) {
+                  if (response.result === "Score submitted") {
+                    window.location.replace(
+                      "https://wheres-waldo-production.up.railway.app/",
+                    );
+                  } else {
+                    console.log("Score submission error");
+                  }
+                } else {
+                  throw new Error("API fetch error");
+                }
+              })
+              .catch((error) => console.error(error));
           }
           div.appendChild(name);
           div.appendChild(button);
@@ -361,11 +470,11 @@
       const odlt = document.querySelector("#odlt");
       const wizc = document.querySelector("#wizc");
       const wizt = document.querySelector("#wizt");
-      function turnCircleGreen (ele) {
+      function turnCircleGreen(ele) {
         ele.classList.remove("red");
         ele.classList.add("green");
       }
-      function turnTextGreen (ele) {
+      function turnTextGreen(ele) {
         ele.classList.remove("colored");
         ele.classList.add("colorgr");
         ele.textContent = "Found";
@@ -378,7 +487,7 @@
         let canvas = document.createElement("canvas");
         var rect = e.currentTarget.getBoundingClientRect();
         var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top + 150;
+        var y = e.clientY - rect.top;
         // console.log("Left : " + x + " ; Top : " + y + ".");
         function drawCircle(ele, color) {
           const context = ele.getContext("2d");

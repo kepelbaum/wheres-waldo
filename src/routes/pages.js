@@ -1,5 +1,4 @@
 import { Router } from "express";
-// import Highscore from "../models/highscore";
 
 const router = Router();
 
