@@ -279,8 +279,7 @@
         }
       });
       function setTimer(date) {
-        const start = new Date(date).getTime();
-
+        const start = new Date(date).valueOf();
         function updateTime() {
           let end = Date.now();
           let elapsed = end - start;
