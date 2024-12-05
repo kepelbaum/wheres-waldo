@@ -263,8 +263,9 @@
           .then((response) => {
             if (response.result) {
               id = response.result;
-              date = response.date;
-              setTimer(date);
+              // date = response.date;
+              // setTimer(date);
+              setTimer();
             } else {
               throw new Error("API fetch error");
             }
@@ -278,25 +279,10 @@
           gameWrapper.focus();
         }
       });
-      function setTimer(date) {
-        console.log("Date:", date);
-
-        const parsedDate = new Date(date);
-        console.log("Parsed date:", parsedDate);
-        console.log("Parsed date ISO:", parsedDate.toISOString());
-        console.log("Offset:", parsedDate.getTimezoneOffset());
-
-        const start = Date.parse(parsedDate.toISOString());
-        const now = Date.now();
-        console.log("Start:", start);
-        console.log("Now:", now);
-        console.log("Diff:", now - start);
+      function setTimer() {
+        const start = Date.now();
         function updateTime() {
-          let end = Date.now();
-          let elapsed = end - start;
-          if (elapsed < 1000) {
-            console.log("Elapsed time", elapsed);
-          }
+          let elapsed = Date.now() - start;
           let minutes = Math.floor(elapsed / 60000);
           let seconds = Math.floor((elapsed % 60000) / 1000);
           let milliseconds = Math.floor((elapsed % 1000) / 10);
@@ -547,7 +533,6 @@
         context.stroke();
         canvas.setAttribute(
           "style",
-          "position: absolute; left: " + "style",
           "position: absolute; left: " +
             (x - centerX) +
             "px; top: " +
