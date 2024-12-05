@@ -279,10 +279,24 @@
         }
       });
       function setTimer(date) {
-        const start = new Date(date).valueOf();
+        console.log("Date:", date);
+
+        const parsedDate = new Date(date);
+        console.log("Parsed date:", parsedDate);
+        console.log("Parsed date ISO:", parsedDate.toISOString());
+        console.log("Offset:", parsedDate.getTimezoneOffset());
+
+        const start = parsedDate.valueOf();
+        const now = Date.now();
+        console.log("Start:", start);
+        console.log("Now:", now);
+        console.log("Diff:", now - start);
         function updateTime() {
           let end = Date.now();
           let elapsed = end - start;
+          if (elapsed < 1000) {
+            console.log("Elapsed time", elapsed);
+          }
           let minutes = Math.floor(elapsed / 60000);
           let seconds = Math.floor((elapsed % 60000) / 1000);
           let milliseconds = Math.floor((elapsed % 1000) / 10);
