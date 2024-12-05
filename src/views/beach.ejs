@@ -279,10 +279,9 @@
         }
       });
       function setTimer(date) {
-        const start = new Date(date);
         function updateTime() {
           let end = Date.now();
-          let elapsed = end - start;
+          let elapsed = end - date;
           let minutes = Math.floor(elapsed / 60000);
           let seconds = Math.floor((elapsed % 60000) / 1000);
           let milliseconds = Math.floor((elapsed % 1000) / 10);
