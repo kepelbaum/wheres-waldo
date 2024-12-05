@@ -282,12 +282,16 @@
         const start = new Date(date);
         function updateTime() {
           let end = Date.now();
-          let di = new Date(end - start);
-          let diff = new Date(end - start)
-            .toISOString()
-            .slice(14, -1)
-            .toString();
-          timer.textContent = diff;
+          let elapsed = end - start;
+          let minutes = Math.floor(elapsed / 60000);
+          let seconds = Math.floor((elapsed % 60000) / 1000);
+          let milliseconds = Math.floor((elapsed % 1000) / 10);
+
+          minutes = minutes.toString().padStart(2, "0");
+          seconds = seconds.toString().padStart(2, "0");
+          milliseconds = milliseconds.toString().padStart(2, "0");
+
+          timer.textContent = `${minutes}:${seconds}:${milliseconds}`;
         }
         interval = setInterval(updateTime, 10);
       }
