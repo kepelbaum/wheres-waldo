@@ -286,7 +286,7 @@
         console.log("Parsed date ISO:", parsedDate.toISOString());
         console.log("Offset:", parsedDate.getTimezoneOffset());
 
-        const start = parsedDate.valueOf();
+        const start = Date.parse(parsedDate.toISOString());
         const now = Date.now();
         console.log("Start:", start);
         console.log("Now:", now);
