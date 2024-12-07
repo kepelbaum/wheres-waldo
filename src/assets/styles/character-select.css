@@ -1,0 +1,35 @@
+.waldo,
+.whitebeard,
+.odlaw {
+  width: 120px;
+  height: 60px;
+  border: 2px solid black;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.waldo:hover,
+.whitebeard:hover,
+.odlaw:hover {
+  background-color: #ffe4c4;
+  transform: scale(1.05);
+}
+
+.icon {
+  height: 35px;
+  width: 35px;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}

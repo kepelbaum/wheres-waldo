@@ -1,0 +1,58 @@
+.header {
+  background-color: antiquewhite;
+  height: 150px;
+  width: 100%;
+  border-bottom: 2px solid black;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  justify-content: space-evenly;
+  z-index: 1000;
+  position: sticky;
+  min-width: 100vw;
+}
+
+.header img {
+  border: 1px solid black;
+}
+
+.timer {
+  font-size: 30px;
+  font-weight: bold;
+  padding: 5px 10px;
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid black;
+  min-width: 120px;
+  text-align: center;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.colored {
+  color: red;
+}
+
+.colorgr {
+  color: green;
+}

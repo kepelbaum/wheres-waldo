@@ -1,0 +1,22 @@
+.game-wrapper {
+  position: relative;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.game-wrapper:focus {
+  outline: none;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.clickable {
+  position: relative;
+  width: fit-content;
+}
