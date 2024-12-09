@@ -20,11 +20,11 @@ A web-based photo tagging game inspired by Where's Waldo. Players search for cha
 - RESTful API for game state management and score submission
 - No external JavaScript libraries or frameworks used
 
-## Live Demo
+## Live App
 
 Try it here: [Where's Waldo Game](https://wheres-waldo-production.up.railway.app/)
 
-## Getting Started
+## Local Development
 
 1. Clone the repository
 2. Install dependencies: `npm install`
