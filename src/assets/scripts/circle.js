@@ -53,6 +53,7 @@ export function circleWrapper(state) {
         (y - centerY) +
         "px;",
     );
+    cdiv.style.overflow = "hidden";
     cdiv.appendChild(canvas);
 
     const div = document.createElement("div");
@@ -152,16 +153,24 @@ export function circleWrapper(state) {
             : x > 2835
               ? x - 160
               : x + 60;
-    let divy = y > 1980 ? y - centerY - 150 : y - centerY;
+    const menuHeight = state.waldosLeft * 50;
+    let divy;
+    if (y - centerY < menuHeight) {
+      divy = y + centerY - 75;
+    } else if (y + menuHeight > 2000) {
+      divy = y - centerY - menuHeight + 75;
+    } else {
+      divy = y > 1980 ? y - centerY - 150 : y - centerY;
+    }
     div.setAttribute(
       "style",
-      "width: 100px; height: " +
-        state.waldosLeft * 50 +
-        "px; background-color: white; position: absolute; left: " +
+      `width: 100px; height: ` +
+        menuHeight +
+        `px; background-color: white; position: absolute; left: ` +
         divx +
-        "px; top: " +
+        `px; top: ` +
         divy +
-        "px; display: flex; flex-direction: column;",
+        `px; display: flex; flex-direction: column; justify-content: ${state.waldosLeft < 3 ? "center" : "flex-start"}`,
     );
 
     cdiv.appendChild(div);
